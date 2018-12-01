@@ -1,0 +1,57 @@
+body{margin: 0}
+.color-picker{
+  width: 255px;
+  margin:  50px auto;
+  padding: 10px; 
+  border: 1px solid #ddd;
+  border-radius: 4px;     
+}
+.saturation{
+  position: relative;
+  width: 100%;
+  padding-bottom: 75%;
+  background: rgb(255,0,0)
+}
+.color-picker,.white,.black{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.white{
+  background: linear-gradient(to right, #fff, rgba(255,255,255,0));
+}
+.black{
+  background: linear-gradient(to top, #000, rgba(0,0,0,0));
+}
+.sketch-control{
+  padding: 10px 0;
+}
+.hue-horizontal {
+  position: relative;
+  height: 10px;
+  background: linear-gradient(to right, #f00 0%, #ff0 16.67%, #0f0 33.34%, #0ff 50.01%, #00f 66.67%, #f0f 83.35%, #f00 100%);
+}
+.hue-picker{
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border-radius: 1px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, .6);
+  background: #fff;
+  cursor: pointer;
+}
+.sketch-field{
+  display: flex;
+  justify-content: flex-end
+}
+.sketch-field > div{
+  text-align:center
+}
+.sketch-field input{
+  box-sizing: border-box;
+  width: 80%;
+}
