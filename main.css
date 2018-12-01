@@ -12,7 +12,7 @@ body{margin: 0}
   padding-bottom: 75%;
   background: rgb(255,0,0)
 }
-.color-picker,.white,.black{
+.white,.black{
   position: absolute;
   top: 0;
   right: 0;
