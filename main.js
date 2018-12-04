@@ -1,44 +1,86 @@
-((function(){
+// ((function(){
   document.onselectstart = function(){return false}
 
-  const R = document.getElementById('RGB-R'),
-        G = document.getElementById('RGB-G'),
-        B = document.getElementById('RGB-B'),
-        saturation = document.getElementById('saturation'),
-        hueHorizontal = document.getElementById('hueHorizontal'),
-        huePicker = hueHorizontal.children[0],
-        hueHorizontalW = +window.getComputedStyle(hueHorizontal,null).width.slice(0,-2),
-        rangeStart = ~~hueHorizontal.getBoundingClientRect().x,
-        rangeEnd =  rangeStart + hueHorizontalW;
+  const doc = document.documentElement,
+  getElement = function( id ) {
+    return document.getElementById(id)
+  },
+  R = getElement('RGB-R'),
+  G = getElement('RGB-G'),
+  B = getElement('RGB-B'),
+  saturation = getElement('saturation'),
+  saturationPointer = getElement('saturationPointer'),
+  sbox = saturation.getBoundingClientRect(),
 
-  hueHorizontal.addEventListener('mousedown',down,false)
+  hueHorizontal = getElement('hueHorizontal'),
+  huePicker = hueHorizontal.children[0],
+  hbox = hueHorizontal.getBoundingClientRect();
+
+  let type = null,
+      box = null,
+      locksp = false,
+      srgb = {r: 255, g: 255, b: 255},
+      hrgb = {r: 255, g: 0, b: 0},
+      rateSX = 0,
+      rateSY = 0;
+
+  saturation.addEventListener('mousedown',function(e){
+    type = 'saturation';
+    if(!locksp){
+      locksp = true;
+    }
+    box = sbox;
+    down(e);
+  },false)
+  hueHorizontal.addEventListener('mousedown',function(e){
+    type = 'hueHorizontal'
+    box = hbox;
+    down(e)
+  },false)
 
   function down(e){
     getPosition(e)
-    document.documentElement.addEventListener('mousemove',move,false)
-    document.documentElement.addEventListener('mouseup',up,false)
+    doc.addEventListener('mousemove',move,false)
+    doc.addEventListener('mouseup',up,false)
   }
   function up(e){
-    document.documentElement.removeEventListener('mousemove',move)
-    document.documentElement.removeEventListener('mouseup',up)
+    doc.removeEventListener('mousemove',move)
+    doc.removeEventListener('mouseup',up)
     getPosition(e)
   }
   function move(e){
     getPosition(e)
   }     
-
+  
   function getPosition (e) {
     let x = e.clientX;
-    x = x > rangeStart
-      ? x < rangeEnd 
-        ? x
-        : rangeEnd
-      : rangeStart
-    const rate = (x - rangeStart - 2)/hueHorizontalW*100
-    huePicker.style.left = rate + '%';
-    getRGB((x - rangeStart)/hueHorizontalW*100)
+    let y = e.clientY;
+    
+    console.log(box)
+    x = x > box.left
+    ? x < box.right 
+      ? x
+      : box.right 
+    : box.left
+
+    y = y > box.top
+    ? y < box.bottom 
+      ? y
+      : box.bottom 
+    : box.top
+    const rateX = (x - box.left)/box.width * 100,
+          rateY = (y - box.top)/box.height * 100;
+    if(type === 'hueHorizontal'){
+      huePicker.style.left = rateX + '%';
+      getHRGB(rateX)
+    }else{
+      saturationPointer.style.cssText += 'left:'+ rateX + '%;top:'+ rateY + '%';
+      rateSX = rateX
+      rateSY = rateY
+      getSRGB()
+    }
   }
-  function getRGB(rate){
+  function getHRGB(rate) {
     const color = {
       '0': ()=>{
         return {
@@ -83,10 +125,26 @@
         }
       }
     }
-    const rgb = color[Object.keys(color).filter(v=>+v <= rate).slice(-1)]()
-    saturation.style.background = 'rgb('+ rgb.r +', '+ rgb.g +', '+ rgb.b +')'
-    // R.value = rgb.r;
-    // G.value = rgb.g;
-    // B.value = rgb.b;
+    hrgb = color[Object.keys(color).filter(v=>+v <= rate).slice(-1)]()
+    saturation.style.background = 'rgb('+ hrgb.r +', '+ hrgb.g +', '+ hrgb.b +')'
+    if(rateSX || rateSY){
+      getSRGB()
+    }
   }
-})())
+  function getSRGB() {
+    console.log(hrgb)
+    const m = Object.keys(hrgb).filter(v => {
+      return hrgb[v] === 255
+    })
+    Object.keys(srgb).forEach(v => {
+      if(m.indexOf(v) !== -1){
+        srgb[v] = ~~(255*(100 - rateSY)/100)
+      }else{
+        srgb[v] = ~~((srgb[m[0]] + hrgb[v])*(100-rateSX)/100)
+      }
+    })
+    R.value = srgb.r;
+    G.value = srgb.g;
+    B.value = srgb.b;
+  }
+// })())

@@ -8,10 +8,11 @@
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
-  <div class="color-picker" id="colorPicker">
+  <div class="color-picker">
     <div class="saturation" id="saturation">
       <div class="white"></div>
       <div class="black"></div>
+      <div class="saturation-pointer" id="saturationPointer"></div>
     </div>
     <div class="sketch-control">
       <div class="hue-horizontal" id="hueHorizontal">
@@ -20,15 +21,15 @@
     </div>
     <div class="sketch-field">
       <div>
-        <input type="text" id="RGB-R" value="0" />
+        <input type="text" id="RGB-R" value="255" />
         R
       </div>
       <div>
-        <input type="text" id="RGB-G" value="0" />
+        <input type="text" id="RGB-G" value="255" />
         G
       </div>
       <div>
-        <input type="text" id="RGB-B" value="0" />
+        <input type="text" id="RGB-B" value="255" />
         B
       </div>
       <div>
